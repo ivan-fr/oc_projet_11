@@ -104,13 +104,13 @@ def login():
               ' se souvenir de moi={}'.format(
             form.username.data, form.remember_me.data))
 
-        user = User.query.filter_by(username=form.username.data).first()
+        _user = User.query.filter_by(username=form.username.data).first()
 
-        if user is None or not user.check_password(form.password.data):
+        if _user is None or not _user.check_password(form.password.data):
             flash('Prénom ou mot de passe invalide.')
             return redirect(url_for('login'))
 
-        login_user(user, remember=form.remember_me.data)
+        login_user(_user, remember=form.remember_me.data)
         flash('Connexion réussi.')
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -167,19 +167,48 @@ def register():
 @app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
+    _user = User.query.filter_by(username=username).first_or_404()
+    context = {}
 
-    form = EditProfileForm()
-    if form.validate_on_submit():
-        file = form.photo.data
-        filename = user.username + '_' + secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    if _user == current_user:
+        form = EditProfileForm()
+        adress_form = AdressForm
+        if form.validate_on_submit():
+            file = form.photo.data
+            filename = _user.username + '_' + secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        os.remove(
-            os.path.join(app.config['UPLOAD_FOLDER'], user.photo))
+            os.remove(
+                os.path.join(app.config['UPLOAD_FOLDER'], _user.photo))
 
-        user.photo = filename
-        db.session.commit()
-        flash('Vos changements ont été sauvergardé.')
+            _user.photo = filename
+            db.session.commit()
+            flash('Vos changements ont été sauvergardé.')
 
-    return render_template('user.html', user=user, form=form)
+        if adress_form.validate_on_submit():
+            adress = adress_form.street.data + ", " \
+                     + adress_form.postal_code.data + ' ' \
+                     + adress_form.city.data + ", " \
+                     + adress_form.countries.data
+
+            try:
+                google_maps_parsed = parse_geolocate_response(
+                    adress, from_country=adress_form.countries.data)
+
+                _user.street = adress_form.street.data,
+                _user.postal_code = adress_form.postal_code.data,
+                _user.city = adress_form.city.data,
+                _user.countries = adress_form.countries.data,
+                _user.place_id = google_maps_parsed['place_id']
+
+                db.session.commit()
+
+            except Exception as e:
+                logging.exception(e)
+                flash('Une erreur est survenue, probablement que'
+                      ' votre adresse est incorrect.')
+
+        context['form'] = form
+        context['adress_form'] = adress_form
+
+    return render_template('user.html', user=_user, **context)

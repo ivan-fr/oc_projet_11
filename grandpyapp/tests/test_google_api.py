@@ -63,6 +63,7 @@ class TestGoogleMapsApi:
                             }
                         }
                     },
+                    "place_id": "fdfdhqzpoeghqpoqspdojdq",
                     "types": ["establishment", "point_of_interest"]
                 }
             ],
@@ -80,5 +81,6 @@ class TestGoogleMapsApi:
             "asked_address",
             "formatted_address",
             "location",
-            "bounds"
+            "bounds",
+            "place_id"
         ]

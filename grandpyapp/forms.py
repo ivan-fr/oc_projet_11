@@ -55,6 +55,7 @@ class EditProfileForm(FlaskForm):
     photo = FileField(validators=[FileRequired(),
                                   FileAllowed(['jpg', 'png', 'jpeg'],
                                               'Images only!')])
+
     submit = SubmitField('Éditer mon profile')
 
 
