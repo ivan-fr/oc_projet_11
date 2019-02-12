@@ -26,44 +26,43 @@
 
             <h1>Éditer mon adresse</h1>
 
-            <form action="{{ url_for('user') }}" method="post"
-                  id="adress_form">
-                {{ form.hidden_tag() }}
+            <form action="{{ url_for('user', username=user.username) }}" method="post">
+                {{ adress_form.hidden_tag() }}
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        {{ form.street.label }}
-                        {{ form.street(class_="form-control") }}
-                        {% for error in form.street.errors %}
+                        {{ adress_form.street.label }}
+                        {{ adress_form.street(class_="form-control") }}
+                        {% for error in adress_form.street.errors %}
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </div>
                     <div class="form-group col-md-6">
-                        {{ form.city.label }}
-                        {{ form.city(class_="form-control") }}
-                        {% for error in form.city.errors %}
+                        {{ adress_form.city.label }}
+                        {{ adress_form.city(class_="form-control") }}
+                        {% for error in adress_form.city.errors %}
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        {{ form.postal_code.label }}
-                        {{ form.postal_code(class_="form-control") }}
-                        {% for error in form.postal_code.errors %}
+                        {{ adress_form.postal_code.label }}
+                        {{ adress_form.postal_code(class_="form-control") }}
+                        {% for error in adress_form.postal_code.errors %}
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </div>
                     <div class="form-group col-md-6">
-                        {{ form.countries.label }}
-                        {{ form.countries(class_="form-control") }}
-                        {% for error in form.countries.errors %}
+                        {{ adress_form.countries.label }}
+                        {{ adress_form.countries(class_="form-control") }}
+                        {% for error in adress_form.countries.errors %}
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-auto">
-                        {{ form.submit(class_="btn btn-primary") }}
+                        {{ adress_form.submit(class_="btn btn-primary") }}
                     </div>
                 </div>
             </form>

@@ -101,8 +101,8 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         flash('Requête pour se connecter avec l\'utilisateur {},'
-              ' se souvenir de moi={}'.format(
-            form.username.data, form.remember_me.data))
+              ' se souvenir de moi={}'.format(form.username.data,
+                                              form.remember_me.data))
 
         _user = User.query.filter_by(username=form.username.data).first()
 
@@ -172,20 +172,24 @@ def user(username):
 
     if _user == current_user:
         form = EditProfileForm()
-        adress_form = AdressForm
+        adress_form = AdressForm()
+
         if form.validate_on_submit():
             file = form.photo.data
             filename = _user.username + '_' + secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            os.remove(
-                os.path.join(app.config['UPLOAD_FOLDER'], _user.photo))
+            try:
+                os.remove(
+                    os.path.join(app.config['UPLOAD_FOLDER'], _user.photo))
+            except FileNotFoundError:
+                pass
 
             _user.photo = filename
             db.session.commit()
             flash('Vos changements ont été sauvergardé.')
 
-        if adress_form.validate_on_submit():
+        elif adress_form.validate_on_submit():
             adress = adress_form.street.data + ", " \
                      + adress_form.postal_code.data + ' ' \
                      + adress_form.city.data + ", " \
@@ -195,13 +199,15 @@ def user(username):
                 google_maps_parsed = parse_geolocate_response(
                     adress, from_country=adress_form.countries.data)
 
-                _user.street = adress_form.street.data,
-                _user.postal_code = adress_form.postal_code.data,
-                _user.city = adress_form.city.data,
-                _user.countries = adress_form.countries.data,
-                _user.place_id = google_maps_parsed['place_id']
+                _user.street = adress_form.street.data
+                _user.postal_code = adress_form.postal_code.data
+                _user.city = adress_form.city.data
+                _user.countries = adress_form.countries.data
+                _user.place_id = str(google_maps_parsed['place_id'])
 
                 db.session.commit()
+
+                flash('Vos changements ont été sauvergardé.')
 
             except Exception as e:
                 logging.exception(e)
