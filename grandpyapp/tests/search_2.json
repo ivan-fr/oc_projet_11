@@ -1,0 +1,29 @@
+{
+  "batchcomplete": "",
+  "continue": {
+    "sroffset": 3,
+    "continue": "-||"
+  },
+  "query": {
+    "searchinfo": {
+      "totalhits": 7686
+    },
+    "search": [
+      {
+        "ns": 0,
+        "title": "Porsche",
+        "pageid": 24365
+      },
+      {
+        "ns": 0,
+        "title": "Porsche 911",
+        "pageid": 48345830
+      },
+      {
+        "ns": 0,
+        "title": "Ferdinand Porsche",
+        "pageid": 67720
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+venv/*
+.idea/*
+.DS_Store
+.vscode/*
+__pycache__/*
+grandpyapp/static/tests/.pytest_cache/*
+grandpyapp/__pycache__/*
+grandpyapp/managers/__pycache__/*
+grandpyapp/tests/__pycache__/*

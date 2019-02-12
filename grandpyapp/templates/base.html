@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/custom.css') }}">
+    <title>GrandPy Bot, le papy-robot</title>
+</head>
+<body>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">GrandPy Bot</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarText" aria-controls="navbarText"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{{ url_for('index') }}">Accueil</a>
+            </li>
+            {% if current_user.is_anonymous %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('login') }}">Se
+                        connecter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('register') }}">S'inscrire</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Se
+                        déconnecter</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-12">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    {% block body %}
+    {% endblock %}
+
+    <hr/>
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    Réseaux sociaux
+                </div>
+                <div class="card-body">
+                    <figure class="figure">
+                        <img src="{{ url_for('static', filename='image/github.png') }}"
+                             class="figure-img img-fluid rounded"
+                             alt="lien github" width="20" height="20">
+                        <figcaption class="figure-caption">
+                            <a href="https://github.com/ivan-fr/oc_projet_7"
+                               target="_blank">Lien github</a>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+
+{% if url_google_map_api %}
+    <script src="{{ url_google_map_api }}" async defer></script>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "batchcomplete": "",
+  "continue": {
+    "sroffset": 10,
+    "continue": "-||"
+  },
+  "query": {
+    "searchinfo": {
+      "totalhits": 19127
+    },
+    "search": [
+      {
+        "ns": 0,
+        "title": "Barack Obama",
+        "pageid": 534366
+      },
+      {
+        "ns": 0,
+        "title": "Family of Barack Obama",
+        "pageid": 17775180
+      },
+      {
+        "ns": 0,
+        "title": "Barack Obama Sr.",
+        "pageid": 16136849
+      },
+      {
+        "ns": 0,
+        "title": "Presidency of Barack Obama",
+        "pageid": 20082093
+      },
+      {
+        "ns": 0,
+        "title": "Barack Obama citizenship conspiracy theories",
+        "pageid": 20617631
+      },
+      {
+        "ns": 0,
+        "title": "Speeches of Barack Obama",
+        "pageid": 37825066
+      },
+      {
+        "ns": 0,
+        "title": "First inauguration of Barack Obama",
+        "pageid": 20767983
+      },
+      {
+        "ns": 0,
+        "title": "Barack Obama religion conspiracy theories",
+        "pageid": 26472604
+      },
+      {
+        "ns": 0,
+        "title": "Barack Obama Presidential Center",
+        "pageid": 41828619
+      },
+      {
+        "ns": 0,
+        "title": "Early life and career of Barack Obama",
+        "pageid": 16394033
+      }
+    ]
+  }
+}

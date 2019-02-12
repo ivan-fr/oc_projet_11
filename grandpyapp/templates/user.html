@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <h1>{{ user.username|capitalize() }}</h1>
+            <hr>
+            <img width="200px" height="200px"
+                 src="{{ url_for('static', filename="uploads/" + user.photo) }}"
+                 alt="profile image">
+
+            <h1>Éditer mon Profile</h1>
+            <form action="{{ url_for('user', username=user.username) }}"
+                  method="post"
+                  enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.photo.label }}<br>
+                    {{ form.photo }}<br>
+                    {% for error in form.photo.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>{{ form.submit(class_="btn btn-primary") }}</p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

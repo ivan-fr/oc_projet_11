@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <h1>Créer un compte</h1>
+            <form action="{{ url_for('register') }}" method="post"
+                  enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.username.label }}<br>
+                    {{ form.username(size=32) }}<br>
+                    {% for error in form.username.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.password.label }}<br>
+                    {{ form.password(size=32) }}<br>
+                    {% for error in form.password.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.password2.label }}<br>
+                    {{ form.password2(size=32) }}<br>
+                    {% for error in form.password2.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.photo.label }}<br>
+                    {{ form.photo }}<br>
+                    {% for error in form.photo.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        {{ form.street.label }}
+                        {{ form.street(class_="form-control") }}
+                        {% for error in form.street.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group col-md-6">
+                        {{ form.city.label }}
+                        {{ form.city(class_="form-control") }}
+                        {% for error in form.city.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        {{ form.postal_code.label }}
+                        {{ form.postal_code(class_="form-control") }}
+                        {% for error in form.postal_code.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group col-md-6">
+                        {{ form.countries.label }}
+                        {{ form.countries(class_="form-control") }}
+                        {% for error in form.countries.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <p>{{ form.submit(class_="btn btn-primary") }}</p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

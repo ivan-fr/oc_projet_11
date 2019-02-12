@@ -1,0 +1,29 @@
+{
+  "batchcomplete": "",
+  "query": {
+    "normalized": [
+      {
+        "from": "fdosfjdspdj",
+        "to": "Fdosfjdspdj"
+      }
+    ],
+    "pages": {
+      "-1": {
+        "ns": 0,
+        "title": "Fdosfjdspdj",
+        "missing": ""
+      }
+    },
+    "geosearch": [
+      {
+        "pageid": 5094570,
+        "ns": 0,
+        "title": "Great Wall of China",
+        "lat": 40.68,
+        "lon": 117.23,
+        "dist": 378.2,
+        "primary": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "batchcomplete": "",
+  "query": {
+    "geosearch": [
+      {
+        "pageid": 5094570,
+        "ns": 0,
+        "title": "Great Wall of China",
+        "lat": 40.68,
+        "lon": 117.23,
+        "dist": 378.2,
+        "primary": ""
+      },
+      {
+        "pageid": 10135375,
+        "ns": 0,
+        "title": "Jinshanling",
+        "lat": 40.676388888889,
+        "lon": 117.24444444444,
+        "dist": 1057.1,
+        "primary": ""
+      },
+      {
+        "pageid": 34692121,
+        "ns": 0,
+        "title": "Gubeikou",
+        "lat": 40.692169,
+        "lon": 117.16382,
+        "dist": 5987.8,
+        "primary": ""
+      }
+    ]
+  }
+}
