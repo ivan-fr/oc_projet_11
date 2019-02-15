@@ -178,13 +178,14 @@ def user(username, type_form):
         if type_form == "avatar" and form.validate_on_submit():
             file = form.photo.data
             filename = _user.username + '_' + secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             try:
                 os.remove(
                     os.path.join(app.config['UPLOAD_FOLDER'], _user.photo))
             except FileNotFoundError:
                 pass
+
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             _user.photo = filename
             db.session.commit()
