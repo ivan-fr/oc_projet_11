@@ -1,2 +1,1 @@
-web: gunicorn grandpyapp:app
-init: FLASK_APP=run.py
+web: flask db upgrade; gunicorn grandpyapp:app

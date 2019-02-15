@@ -10,10 +10,15 @@ COUNTRIES_FILE = os.path.join(BASE_DIR, "grandpyapp", "static",
 SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 GOOGLE_API_KEY = "AIzaSyCIB8gP3P5S-ttaOCZQBj0efd8sSDbPqdQ"
 
-SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-                          'sqlite:///' + os.path.join(BASE_DIR, 'grandpyapp.db')
-SQLALCHEMY_DATABASE_URI_TEST = os.environ.get('DATABASE_URL') or \
-                               'sqlite:///' + os.path.join(BASE_DIR, 'test.db')
+if os.environ.get('DATABASE_URL') is None:
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR,
+                                                          'grandpyapp.db')
+    SQLALCHEMY_DATABASE_URI_TEST = os.environ.get('DATABASE_URL') or \
+                                   'sqlite:///' + os.path.join(BASE_DIR,
+                                                               'test.db')
+else:
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "grandpyapp", "static", "uploads")
