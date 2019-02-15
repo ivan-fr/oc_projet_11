@@ -164,8 +164,10 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/user/<username>', methods=['GET', 'POST'])
-def user(username):
+@app.route('/user/<username>', methods=['GET', 'POST'],
+           defaults={'type_form': None})
+@app.route('/user/<username>/<type_form>', methods=['GET', 'POST'])
+def user(username, type_form):
     _user = User.query.filter_by(username=username).first_or_404()
     context = {'show_form': False}
 
@@ -173,7 +175,7 @@ def user(username):
         form = EditProfileForm()
         adress_form = AdressForm()
 
-        if form.validate_on_submit():
+        if type_form == "avatar" and form.validate_on_submit():
             file = form.photo.data
             filename = _user.username + '_' + secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -188,7 +190,7 @@ def user(username):
             db.session.commit()
             flash('Vos changements ont été sauvergardé.')
 
-        elif adress_form.validate_on_submit():
+        elif type_form == "adress" and adress_form.validate_on_submit():
             adress = adress_form.street.data + ", " \
                      + adress_form.postal_code.data + ' ' \
                      + adress_form.city.data + ", " \
@@ -212,8 +214,6 @@ def user(username):
                 logging.exception(e)
                 flash('Une erreur est survenue, probablement que'
                       ' votre adresse est incorrect.')
-
-            form.errors = []
 
         context['show_form'] = True
         context['form'] = form
