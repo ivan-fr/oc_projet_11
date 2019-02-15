@@ -12,6 +12,8 @@ GOOGLE_API_KEY = "AIzaSyCIB8gP3P5S-ttaOCZQBj0efd8sSDbPqdQ"
 
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                           'sqlite:///' + os.path.join(BASE_DIR, 'grandpyapp.db')
+SQLALCHEMY_DATABASE_URI_TEST = os.environ.get('DATABASE_URL') or \
+                               'sqlite:///' + os.path.join(BASE_DIR, 'test.db')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "grandpyapp", "static", "uploads")

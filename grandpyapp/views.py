@@ -31,11 +31,8 @@ def index():
             adress = form.street.data + ", " + form.postal_code.data + ' ' \
                      + form.city.data + ", " + form.countries.data
 
-            try:
-                google_maps_parsed = parse_geolocate_response(
-                    adress, from_country=form.countries.data)
-            except Exception as e:
-                logging.exception(e)
+            google_maps_parsed = parse_geolocate_response(
+                adress, from_country=form.countries.data)
 
         if form.errors:
             errors_form = list(form.errors.items())
@@ -96,6 +93,7 @@ def post_ask():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        flash('Déjà connecté')
         return redirect(url_for('index'))
 
     form = LoginForm()
@@ -123,12 +121,14 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
+    flash('Déconnexion réussi.')
     return redirect(url_for('index'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
+        flash('Déjà connecté')
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -165,10 +165,9 @@ def register():
 
 
 @app.route('/user/<username>', methods=['GET', 'POST'])
-@login_required
 def user(username):
     _user = User.query.filter_by(username=username).first_or_404()
-    context = {}
+    context = {'show_form': False}
 
     if _user == current_user:
         form = EditProfileForm()
@@ -207,13 +206,14 @@ def user(username):
 
                 db.session.commit()
 
-                flash('Vos changements ont été sauvergardé.')
+                flash('Vos changements ont été sauvergardés.')
 
             except Exception as e:
                 logging.exception(e)
                 flash('Une erreur est survenue, probablement que'
                       ' votre adresse est incorrect.')
 
+        context['show_form'] = True
         context['form'] = form
         context['adress_form'] = adress_form
 
