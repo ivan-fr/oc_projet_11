@@ -25,7 +25,7 @@ function calculateAndDisplayRoute(start, end, directionsService, directionsDispl
     }, function (response, status) {
         if (status === 'OK') {
             info = response.routes[0].legs[0];
-            info_div.innerHTML = "Disctance : " + info.distance.text + "<br>" + "Durée : " + info.duration.text;
+            info_div.innerHTML = "Distance : " + info.distance.text + "<br>" + "Durée : " + info.duration.text + "en voiture.";
             directionsDisplay.set('directions', null);
             directionsDisplay.setDirections(response);
             div_media.setAttribute('data-user-origin', start);

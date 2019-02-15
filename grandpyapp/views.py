@@ -213,6 +213,8 @@ def user(username):
                 flash('Une erreur est survenue, probablement que'
                       ' votre adresse est incorrect.')
 
+            form.errors = []
+
         context['show_form'] = True
         context['form'] = form
         context['adress_form'] = adress_form
