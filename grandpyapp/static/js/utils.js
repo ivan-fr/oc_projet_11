@@ -40,7 +40,7 @@ submit_ask_button.type = "submit";
 submit_ask_button.classList.add("btn");
 submit_ask_button.classList.add("btn-primary");
 submit_ask_button.classList.add("mb-2");
-submit_ask_button.appendChild(document.createTextNode("Soumettre"));
+submit_ask_button.appendChild(document.createTextNode("Envoyer"));
 
 let loader_img = document.createElement("div");
 loader_img.classList.add("loader");

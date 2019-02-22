@@ -1,10 +1,12 @@
+import json
+
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
     validators, SelectField
-from flask_wtf.file import FileField, FileRequired, FileAllowed
-from grandpyapp.models import User
+
 from config import COUNTRIES_FILE
-import json
+from grandpyapp.models import User
 
 
 class LoginForm(FlaskForm):
@@ -71,5 +73,20 @@ class AdressForm(FlaskForm):
     with open(COUNTRIES_FILE, "r", encoding="utf-8") as file:
         countries = SelectField('Pays', choices=list((json.load(file)).items()),
                                 validators=[validators.DataRequired()])
+
+    submit = SubmitField('Envoyer')
+
+
+class AskForm(FlaskForm):
+    ask = StringField('ask', validators=[validators.DataRequired(),
+                                         validators.Length(max=200)],
+                      render_kw={"placeholder": "Salut GrandPy ! "
+                                                "Est-ce que tu connais "
+                                                "l'adresse d'OpenClassrooms ?",
+                                 "autocomplete": "off"})
+
+    with open(COUNTRIES_FILE, "r", encoding="utf-8") as file:
+        _list = [('', '')] + list((json.load(file)).items())
+        countries = SelectField('Pays', choices=_list)
 
     submit = SubmitField('Envoyer')

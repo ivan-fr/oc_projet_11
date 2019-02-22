@@ -42,14 +42,17 @@
     <hr>
     <div class="row">
         <div class="col-12">
-            <form action="{{ url_for('post_ask') }}" id="messagerie-form">
+            <form action="{{ url_for('post_ask') }}" method="post"
+                  id="messagerie-form">
+                {{ ask_form.hidden_tag() }}
                 <div class="form-row justify-content-center">
-                    <div class="col-8">
-                        <label class="sr-only" for="ask">ask</label>
-                        <input type="text" id="ask" name="ask"
-                               class="form-control"
-                               placeholder="Exemple: Salut GrandPy ! Est-ce que tu connais l'adresse d'OpenClassrooms ?"
-                               autocomplete="off">
+                    <div class="col-6">
+                        {{ ask_form.ask.label(class_="sr-only") }}
+                        {{ ask_form.ask(class_="form-control") }}
+                    </div>
+                    <div class="col-2">
+                        {{ ask_form.countries.label(class_="sr-only") }}
+                        {{ ask_form.countries(class_="form-control") }}
                     </div>
                     <div class="col-auto" id="submit_form">
                     </div>

@@ -1,27 +1,26 @@
-from flask import render_template, request, flash, redirect, url_for
-
-from grandpyapp.managers.parser import parse_sentence
-from grandpyapp.managers.googlemaps import parse_geolocate_response
-import grandpyapp.managers.wikipedia as wikipedia
-from grandpyapp import app, db
-from grandpyapp.forms import LoginForm, RegistrationForm, EditProfileForm, \
-    AdressForm
-from grandpyapp.models import User
-
-from flask_login import current_user, login_user, logout_user, login_required
-
-from werkzeug.urls import url_parse
-from werkzeug.utils import secure_filename
-
 import json
 import logging
 import os
+
+from flask import render_template, request, flash, redirect, url_for
+from flask_login import current_user, login_user, logout_user
+from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
+
+import grandpyapp.managers.wikipedia as wikipedia
+from grandpyapp import app, db
+from grandpyapp.forms import LoginForm, RegistrationForm, EditProfileForm, \
+    AdressForm, AskForm
+from grandpyapp.managers.googlemaps import parse_geolocate_response
+from grandpyapp.managers.parser import parse_sentence
+from grandpyapp.models import User
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """Render the index page."""
     form = AdressForm()
+    ask_form = AskForm()
 
     if request.is_xhr:
         google_maps_parsed = None
@@ -46,21 +45,29 @@ def index():
           "maps/api/js?key={}".format(app.config["GOOGLE_API_KEY"])
 
     return render_template('index.html', url_google_map_api=url,
-                           form=form)
+                           form=form, ask_form=ask_form)
 
 
 @app.route('/post_ask/', methods=['POST'])
 def post_ask():
     """traitment of the ask request
     :return google_maps and wikipedia response"""
-    if request.form.get('ask'):
+
+    ask_form = AskForm()
+
+    if ask_form.validate_on_submit():
         google_maps_parsed = {}
         wikipedia_parsed = {}
-        _parse_sentence = parse_sentence(request.form['ask'])
+        _parse_sentence = parse_sentence(ask_form.ask.data)
 
         if _parse_sentence:
             try:
-                google_maps_parsed = parse_geolocate_response(_parse_sentence)
+                if ask_form.countries.data != '':
+                    google_maps_parsed = parse_geolocate_response(
+                        _parse_sentence, from_country=ask_form.countries.data)
+                else:
+                    google_maps_parsed = parse_geolocate_response(
+                        _parse_sentence)
 
                 wiki_search_list = wikipedia.search(
                     google_maps_parsed['asked_address'], suggestion=False)
@@ -81,7 +88,7 @@ def post_ask():
                     wikipedia_parsed['_summary'] = wikipedia_page.summary(
                         sentences=2)
                     wikipedia_parsed['url'] = wikipedia_page.url
-            except Exception as e:
+            except AssertionError as e:
                 logging.exception(e)
 
         return json.dumps({
