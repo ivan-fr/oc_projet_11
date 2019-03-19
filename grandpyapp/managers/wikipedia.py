@@ -3,137 +3,145 @@ from .utils import return_urllib_request
 API_URL = 'https://fr.wikipedia.org/w/api.php'
 
 
-def search(query, results=10, suggestion=False):
-    """
-    Do a Wikipedia search for `query`.
+class WikipediaFunction:
 
-    Keyword arguments:
+    @staticmethod
+    def search(query, results=10, suggestion=False):
+        """
+        Do a Wikipedia search for `query`.
 
-    * results - the maxmimum number of results returned
-    * suggestion - if True, return results and suggestion (if any) in a tuple
-    """
+        Keyword arguments:
 
-    search_params = {
-        'list': 'search',
-        'srprop': '',
-        'srlimit': results,
-        'limit': results,
-        'srsearch': query
-    }
-    if suggestion:
-        search_params['srinfo'] = 'suggestion'
+        * results - the maxmimum number of results returned
+        * suggestion - if True, return results and suggestion (if any) in a
+         tuple
+        """
 
-    raw_results = _wiki_request(search_params)
+        search_params = {
+            'list': 'search',
+            'srprop': '',
+            'srlimit': results,
+            'limit': results,
+            'srsearch': query
+        }
+        if suggestion:
+            search_params['srinfo'] = 'suggestion'
 
-    if 'error' in raw_results:
-        if raw_results['error']['info'] in ('HTTP request timed out.',
-                                            'Pool queue is full'):
-            raise Exception(
-                "Searching for \"{0}\" resulted in a timeout."
-                " Try again in a few"
-                " seconds, and make sure you have"
-                " rate limiting set to True.".format(query))
+        raw_results = _wiki_request(search_params)
+
+        if 'error' in raw_results:
+            if raw_results['error']['info'] in ('HTTP request timed out.',
+                                                'Pool queue is full'):
+                raise Exception(
+                    "Searching for \"{0}\" resulted in a timeout."
+                    " Try again in a few"
+                    " seconds, and make sure you have"
+                    " rate limiting set to True.".format(query))
+            else:
+                raise Exception("An unknown error occured: \"{0}\"."
+                                " Please report it on GitHub!"
+                                .format(raw_results['error']['info']))
+
+        search_results = (d['title'] for d in raw_results['query']['search'])
+
+        if suggestion:
+            if raw_results['query'].get('searchinfo'):
+                return list(search_results), raw_results['query']['searchinfo'][
+                    'suggestion']
+            else:
+                return list(search_results), None
+
+        return list(search_results)
+
+    @staticmethod
+    def geosearch(latitude, longitude, title=None, results=10, radius=1000):
+        """
+        Do a wikipedia geo search for `latitude` and `longitude`
+        using HTTP API described in
+        http://www.mediawiki.org/wiki/Extension:GeoData
+
+        Arguments:
+
+        * latitude (float or decimal.Decimal)
+        * longitude (float or decimal.Decimal)
+
+        Keyword arguments:
+
+        * title - The title of an article to search for
+        * results - the maximum number of results returned
+        * radius - Search radius in meters. The value must be between 10 and
+         10000
+        """
+
+        search_params = {
+            'list': 'geosearch',
+            'gsradius': radius,
+            'gscoord': '{0}|{1}'.format(latitude, longitude),
+            'gslimit': results
+        }
+        if title:
+            search_params['titles'] = title
+
+        raw_results = _wiki_request(search_params)
+
+        if 'error' in raw_results:
+            if raw_results['error']['info'] in ('HTTP request timed out.',
+                                                'Pool queue is full'):
+                raise Exception("Searching for \"{0}\" resulted in a timeout."
+                                " Try again in a few"
+                                " seconds, and make sure you have"
+                                " rate limiting set to True."
+                                .format('{0}|{1}'.format(latitude, longitude)))
+            else:
+                raise Exception("An unknown error occured: \"{0}\"."
+                                " Please report it on GitHub!"
+                                .format(raw_results['error']['info']))
+
+        search_pages = raw_results['query'].get('pages', None)
+        if search_pages:
+            search_results = (v['title'] for k, v in search_pages.items() if
+                              k != '-1')
         else:
-            raise Exception("An unknown error occured: \"{0}\"."
-                            " Please report it on GitHub!"
-                            .format(raw_results['error']['info']))
+            search_results = (d['title'] for d in
+                              raw_results['query']['geosearch'])
 
-    search_results = (d['title'] for d in raw_results['query']['search'])
+        return list(search_results)
 
-    if suggestion:
-        if raw_results['query'].get('searchinfo'):
-            return list(search_results), raw_results['query']['searchinfo'][
-                'suggestion']
+    @staticmethod
+    def page(title=None, pageid=None, auto_suggest=True, redirect=True):
+        """
+        Get a WikipediaPage object for the page with title `title` or the pageid
+        `pageid` (mutually exclusive).
+
+        Keyword arguments:
+
+        * title - the title of the page to load
+        * pageid - the numeric pageid of the page to load
+        * auto_suggest - let Wikipedia find a valid page title for the query
+        * redirect - allow redirection without raising RedirectError
+        * preload - load content, summary, images, references, and
+        links during initialization
+        """
+
+        if title is not None:
+            if auto_suggest:
+                results, suggestion = WikipediaFunction.search(
+                    title, results=1, suggestion=True)
+                try:
+                    title = suggestion or results[0]
+                except IndexError:
+                    # if there is no suggestion or search results,
+                    # the page doesn't exist
+                    raise Exception("\"{0}\" does not match any pages."
+                                    " Try another query!".format(title))
+            return WikipediaPage(title, redirect=redirect)
+        elif pageid is not None:
+            return WikipediaPage(pageid=pageid)
         else:
-            return list(search_results), None
-
-    return list(search_results)
+            raise ValueError("Either a title or a pageid must be specified")
 
 
-def geosearch(latitude, longitude, title=None, results=10, radius=1000):
-    """
-    Do a wikipedia geo search for `latitude` and `longitude`
-    using HTTP API described in http://www.mediawiki.org/wiki/Extension:GeoData
-
-    Arguments:
-
-    * latitude (float or decimal.Decimal)
-    * longitude (float or decimal.Decimal)
-
-    Keyword arguments:
-
-    * title - The title of an article to search for
-    * results - the maximum number of results returned
-    * radius - Search radius in meters. The value must be between 10 and 10000
-    """
-
-    search_params = {
-        'list': 'geosearch',
-        'gsradius': radius,
-        'gscoord': '{0}|{1}'.format(latitude, longitude),
-        'gslimit': results
-    }
-    if title:
-        search_params['titles'] = title
-
-    raw_results = _wiki_request(search_params)
-
-    if 'error' in raw_results:
-        if raw_results['error']['info'] in ('HTTP request timed out.',
-                                            'Pool queue is full'):
-            raise Exception("Searching for \"{0}\" resulted in a timeout."
-                            " Try again in a few"
-                            " seconds, and make sure you have"
-                            " rate limiting set to True."
-                            .format('{0}|{1}'.format(latitude, longitude)))
-        else:
-            raise Exception("An unknown error occured: \"{0}\"."
-                            " Please report it on GitHub!"
-                            .format(raw_results['error']['info']))
-
-    search_pages = raw_results['query'].get('pages', None)
-    if search_pages:
-        search_results = (v['title'] for k, v in search_pages.items() if
-                          k != '-1')
-    else:
-        search_results = (d['title'] for d in raw_results['query']['geosearch'])
-
-    return list(search_results)
-
-
-def page(title=None, pageid=None, auto_suggest=True, redirect=True):
-    """
-    Get a WikipediaPage object for the page with title `title` or the pageid
-    `pageid` (mutually exclusive).
-
-    Keyword arguments:
-
-    * title - the title of the page to load
-    * pageid - the numeric pageid of the page to load
-    * auto_suggest - let Wikipedia find a valid page title for the query
-    * redirect - allow redirection without raising RedirectError
-    * preload - load content, summary, images, references, and
-    links during initialization
-    """
-
-    if title is not None:
-        if auto_suggest:
-            results, suggestion = search(title, results=1, suggestion=True)
-            try:
-                title = suggestion or results[0]
-            except IndexError:
-                # if there is no suggestion or search results,
-                # the page doesn't exist
-                raise Exception("\"{0}\" does not match any pages."
-                                " Try another query!".format(title))
-        return WikipediaPage(title, redirect=redirect)
-    elif pageid is not None:
-        return WikipediaPage(pageid=pageid)
-    else:
-        raise ValueError("Either a title or a pageid must be specified")
-
-
-class WikipediaPage(object):
+class WikipediaPage:
     """
     Contains data from a Wikipedia page.
     """
@@ -214,8 +222,8 @@ class WikipediaPage(object):
             else:
                 raise Exception(
                     "\"{0}\" resulted in a redirect. Set the redirect property"
-                    " to True to allow automatic redirects."
-                    .format(getattr(self, 'title', _page['title'])))
+                    " to True to allow automatic redirects.".format(
+                        getattr(self, 'title', _page['title'])))
 
         # since we only asked for disambiguation in ppprop,
         # if a pageprop is returned,

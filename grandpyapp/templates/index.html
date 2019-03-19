@@ -1,35 +1,33 @@
 {% extends 'base.html' %}
 
 {% block body %}
-    <div class="row">
+    <div class="row mx-0 px-4 py-3 background-violet">
         <div class="col-12">
-            <h2 class="text-center">Localise une adresse et apprends son
-                histoire
-                avec GrandPy Bot</h2>
-            <hr>
-            <div class="row justify-content-center">
-                <div class="col-auto">
-                    <img src="{{ url_for('static', filename='image/grandpa.png') }}"
-                         alt="uncle grandpa"
-                         class="rounded float-right height-200">
-                </div>
-                <div class="col-6">
-                    {% if current_user.is_anonymous %}
-                        <h3>Salut à toi, ô jeune être en recherche !</h3>
-                    {% else %}
-                        <h3>Salut {{ current_user.username|capitalize() }}
-                            !</h3>
-                    {% endif %}
-                    <p>Mon grand âge m'a donné une longue expérience de la
-                        géographie et de l'histoire.</p>
-                    <p>Teste donc mes connaissances...</p>
-                </div>
-            </div>
+            <h2 class="mb-0">GrandPy Bot</h2>
         </div>
     </div>
+
+    <hr class="mt-0">
+
+    <div class="row mx-4 justify-content-center">
+        <div class="col-auto">
+            <img src="{{ url_for('static', filename='image/grandpa.png') }}"
+                 alt="uncle grandpa"
+                 class="rounded float-right height-130">
+        </div>
+        <div class="col-6">
+            <h3>Localise une adresse et apprends son
+                histoire !</h3>
+            <p>Mon grand âge m'a donné une longue expérience de la
+                géographie et de l'histoire.</p>
+            <p>Teste donc mes connaissances...</p>
+        </div>
+    </div>
+
     <hr>
+
     <div class="row justify-content-center">
-        <div class="col-6" id="messagerie">
+        <div class="col-10" id="messagerie">
             <span data-image-papi="{{ url_for('static', filename='image/older_man.png') }}"
                     {% if current_user.is_anonymous %}
                   data-image-user="{{ url_for('static', filename='image/user.png') }}"
@@ -39,13 +37,23 @@
                     {% endif %} ></span>
         </div>
     </div>
+
     <hr>
+
     <div class="row">
         <div class="col-12">
             <form action="{{ url_for('post_ask') }}" method="post"
                   id="messagerie-form">
                 {{ ask_form.hidden_tag() }}
                 <div class="form-row justify-content-center">
+                    <div class="col-auto">
+                        <button type="button" id="eraser" class="btn"><i
+                                class="fas fa-eraser"></i></button>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" id="random" class="btn"><i
+                                class="fas fa-random"></i></button>
+                    </div>
                     <div class="col-6">
                         {{ ask_form.ask.label(class_="sr-only") }}
                         {{ ask_form.ask(class_="form-control") }}
@@ -60,7 +68,9 @@
             </form>
         </div>
     </div>
+
     <hr>
+
     <div class="row justify-content-center">
         <div class="col-6">
             {% if current_user.is_anonymous %}

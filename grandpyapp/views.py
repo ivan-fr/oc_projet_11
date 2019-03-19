@@ -7,12 +7,12 @@ from flask_login import current_user, login_user, logout_user
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
-import grandpyapp.managers.wikipedia as wikipedia
 from grandpyapp import app, db
 from grandpyapp.forms import LoginForm, RegistrationForm, EditProfileForm, \
     AdressForm, AskForm
-from grandpyapp.managers.googlemaps import parse_geolocate_response
-from grandpyapp.managers.parser import parse_sentence
+from grandpyapp.managers.wikipedia import WikipediaFunction
+from grandpyapp.managers.googlemaps import GoogleFunction
+from grandpyapp.managers.parser import Parser
 from grandpyapp.models import User
 
 
@@ -30,7 +30,7 @@ def index():
             adress = form.street.data + ", " + form.postal_code.data + ' ' \
                      + form.city.data + ", " + form.countries.data
 
-            google_maps_parsed = parse_geolocate_response(
+            google_maps_parsed = GoogleFunction.parse_geolocate(
                 adress, from_country=form.countries.data)
 
         if form.errors:
@@ -58,36 +58,48 @@ def post_ask():
     if ask_form.validate_on_submit():
         google_maps_parsed = {}
         wikipedia_parsed = {}
-        _parse_sentence = parse_sentence(ask_form.ask.data)
+        _parse_sentence = Parser.parse_sentence(ask_form.ask.data)
 
         if _parse_sentence:
             try:
                 if ask_form.countries.data != '':
-                    google_maps_parsed = parse_geolocate_response(
-                        _parse_sentence, from_country=ask_form.countries.data)
+                    google_maps_parsed = GoogleFunction.parse_geolocate(
+                        _parse_sentence,
+                        from_country=ask_form.countries.data)
                 else:
-                    google_maps_parsed = parse_geolocate_response(
+                    google_maps_parsed = GoogleFunction.parse_geolocate(
                         _parse_sentence)
 
-                wiki_search_list = wikipedia.search(
+                wiki_search_list = WikipediaFunction.search(
                     google_maps_parsed['asked_address'], suggestion=False)
 
                 if not wiki_search_list:
-                    wiki_search_list = wikipedia.search(
+                    wiki_search_list = WikipediaFunction.search(
                         google_maps_parsed['formatted_address'],
                         suggestion=False)
 
                 if not wiki_search_list:
-                    wiki_search_list = wikipedia.geosearch(
+                    wiki_search_list = WikipediaFunction.geosearch(
                         latitude=google_maps_parsed['location']['lat'],
                         longitude=google_maps_parsed['location']['lng'],
                     )
 
                 if wiki_search_list:
-                    wikipedia_page = wikipedia.page(wiki_search_list[0])
+                    try:
+                        wikipedia_page = WikipediaFunction.page(
+                            wiki_search_list[0])
+                    except Exception:
+                        wiki_search_list = WikipediaFunction.geosearch(
+                            latitude=google_maps_parsed['location']['lat'],
+                            longitude=google_maps_parsed['location']['lng'],
+                        )
+                        wikipedia_page = WikipediaFunction.page(
+                            wiki_search_list[0])
+
                     wikipedia_parsed['_summary'] = wikipedia_page.summary(
                         sentences=2)
                     wikipedia_parsed['url'] = wikipedia_page.url
+
             except AssertionError as e:
                 logging.exception(e)
 
@@ -143,7 +155,7 @@ def register():
                  + form.city.data + ", " + form.countries.data
 
         try:
-            google_maps_parsed = parse_geolocate_response(
+            google_maps_parsed = GoogleFunction.parse_geolocate(
                 adress, from_country=form.countries.data)
 
             file = form.photo.data
@@ -205,7 +217,7 @@ def user(username, type_form):
                      + adress_form.countries.data
 
             try:
-                google_maps_parsed = parse_geolocate_response(
+                google_maps_parsed = GoogleFunction.parse_geolocate(
                     adress, from_country=adress_form.countries.data)
 
                 _user.street = adress_form.street.data

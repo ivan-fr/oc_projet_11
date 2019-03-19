@@ -39,7 +39,6 @@ let submit_ask_button = document.createElement("button");
 submit_ask_button.type = "submit";
 submit_ask_button.classList.add("btn");
 submit_ask_button.classList.add("btn-primary");
-submit_ask_button.classList.add("mb-2");
 submit_ask_button.appendChild(document.createTextNode("Envoyer"));
 
 let loader_img = document.createElement("div");
@@ -49,6 +48,7 @@ let block_submit_from_form = document.getElementById("submit_form");
 block_submit_from_form.appendChild(submit_ask_button);
 
 let ask_input = document.getElementById("ask");
+let countries_input = document.getElementById('countries');
 
 let messagerie = document.createElement("ul");
 messagerie.classList.add("list-unstyled");
@@ -297,8 +297,7 @@ function adress_form_listener(e) {
                 let div_alert_green = document.createElement("div");
                 div_alert_green.classList.add("alert");
                 div_alert_green.classList.add("alert-success");
-                div_alert_green.innerHTML = obj.google_maps_parsed.formatted_address + '. Place id : ' + obj.google_maps_parsed.place_id
-                    + ' <a href="#">Modifier</a>';
+                div_alert_green.innerHTML = obj.google_maps_parsed.formatted_address + ' <a href="#">Modifier</a>';
 
                 adress_result.appendChild(div_alert_green);
                 adress_result_html = adress_result.innerHTML;
@@ -362,3 +361,53 @@ function adress_form_listener(e) {
 
 // Gestion de la soumission du formulaire
 adress_form.addEventListener("submit", adress_form_listener);
+
+let question_list = [
+    ["Salut papi, j'aimerai avoir l'adresse de sète stp.", "FR"],
+    ["coucou grand père, tu ne saurais pas où est situé Paris par hasard ?", "FR"],
+    ["yo papi, j'veux bien l'adresse du groenland.", "GL"],
+    ["hey, tu n'aurais pas une idée d'où se situe la rue des rosiers par hasard ?", "FR"],
+    ["je veux aller en angleterre", "GB"],
+    ["Salut GrandPy ! Est-ce que tu connais l'adresse d'OpenClassrooms ?", "FR"]
+];
+let eraser_button = messagerie_form.querySelector('#eraser');
+let random_button = messagerie_form.querySelector('#random');
+let index_splice_question_list = null;
+
+eraser_button.addEventListener("click", function (e) {
+    e.preventDefault();
+    ask_input.value = "";
+    countries_input.value = "";
+    index_splice_question_list = null;
+});
+
+random_button.addEventListener("click", function (e) {
+    e.preventDefault();
+    let random_list = null;
+    let splice_question_list = null;
+
+    if (index_splice_question_list !== null) {
+        splice_question_list = [];
+        question_list.forEach(function (value, index) {
+            if (index_splice_question_list !== index) {
+                splice_question_list.push(value);
+            }
+        });
+    }
+
+    if (splice_question_list === null) {
+        random_list = question_list[Math.floor(Math.random() * question_list.length)];
+    } else {
+        random_list = splice_question_list[Math.floor(Math.random() * splice_question_list.length)];
+    }
+
+    ask_input.value = random_list[0];
+    countries_input.value = random_list[1];
+
+    question_list.forEach(function (value, index) {
+        if (value === random_list) {
+            index_splice_question_list = index;
+            return false
+        }
+    })
+});

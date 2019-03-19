@@ -9,6 +9,10 @@
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
           crossorigin="anonymous">
     <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
           href="{{ url_for('static', filename='css/custom.css') }}">
     <title>GrandPy Bot, le papy-robot</title>
 </head>
@@ -50,44 +54,42 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container px-0 mt-3" id="body-container">
 
-    <div class="row">
-        <div class="col-12">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <ul>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="row">
+                <div class="col-12">
+                    <ul class="pt-4">
                         {% for message in messages %}
                             <li>{{ message }}</li>
                         {% endfor %}
                     </ul>
-                {% endif %}
-            {% endwith %}
-        </div>
-    </div>
+                </div>
+            </div>
+            <hr class="mt-0">
+        {% endif %}
+    {% endwith %}
 
     {% block body %}
     {% endblock %}
 
-    <hr/>
-    <div class="row justify-content-center">
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header">
-                    Réseaux sociaux
-                </div>
-                <div class="card-body">
-                    <figure class="figure">
-                        <img src="{{ url_for('static', filename='image/github.png') }}"
-                             class="figure-img img-fluid rounded"
-                             alt="lien github" width="20" height="20">
-                        <figcaption class="figure-caption">
-                            <a href="https://github.com/ivan-fr/oc_projet_7"
-                               target="_blank">Lien github</a>
-                        </figcaption>
-                    </figure>
-                </div>
-            </div>
+    <hr class="mb-0">
+
+    <div class="row mx-0 px-4 pt-3 background-grey">
+        <div class="col-3">
+            <h6 class="text-uppercase">Réseaux sociaux</h6>
+            <img src="{{ url_for('static', filename='image/github.png') }}"
+                 class="figure-img img-fluid rounded"
+                 alt="lien github" width="20" height="20">
+            <a href="https://github.com/ivan-fr/oc_projet_7"
+               target="_blank">Lien github</a>
+        </div>
+    </div>
+
+    <div class="row mx-0 px-4 pb-3 background-grey">
+        <div class="col-8">
+            2019 © Tous droits réservés.
         </div>
     </div>
 
