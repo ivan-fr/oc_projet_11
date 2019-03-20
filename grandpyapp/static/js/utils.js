@@ -51,7 +51,7 @@ let ask_input = document.getElementById("ask");
 let countries_input = document.getElementById('countries');
 
 let messagerie = document.createElement("ul");
-messagerie.classList.add("list-unstyled");
+messagerie.classList.add("list-unstyled", "mb-0");
 
 function addMedia(title, message, src_media, nofirst) {
     let media = document.createElement("li");
@@ -297,7 +297,7 @@ function adress_form_listener(e) {
                 let div_alert_green = document.createElement("div");
                 div_alert_green.classList.add("alert");
                 div_alert_green.classList.add("alert-success");
-                div_alert_green.innerHTML = obj.google_maps_parsed.formatted_address + ' <a href="#">Modifier</a>';
+                div_alert_green.innerHTML = obj.google_maps_parsed.formatted_address + '. <a href="#">Modifier</a>';
 
                 adress_result.appendChild(div_alert_green);
                 adress_result_html = adress_result.innerHTML;
