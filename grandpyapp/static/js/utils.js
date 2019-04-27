@@ -313,22 +313,46 @@ function adress_form_listener(e) {
                     b.classList.add("form-group");
                     b.classList.add("col-md-auto");
 
-                    let c = document.createElement("button");
-                    c.classList.add("btn");
-                    c.classList.add("btn-warning");
-                    c.appendChild(document.createTextNode('Annuler'));
+                    let o = document.createElement("div");
+                    o.classList.add("form-group");
+                    o.classList.add("col-md-auto");
 
-                    c.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        adress_result.innerHTML = "";
-                        adress_result.insertAdjacentHTML('afterbegin', adress_result_html);
-                        adress_result.querySelector(".alert a").addEventListener("click", update_adress_listener);
-                    });
+                    if (adress_result_html) {
+                        let c = document.createElement("button");
+                        c.classList.add("btn");
+                        c.classList.add("btn-warning");
+                        c.appendChild(document.createTextNode('Annuler'));
+
+                        c.addEventListener("click", function (e) {
+                            e.preventDefault();
+                            adress_result.innerHTML = "";
+                            adress_result.insertAdjacentHTML('afterbegin', adress_result_html);
+                            adress_result.querySelector(".alert a").addEventListener("click", update_adress_listener);
+                        });
+
+                        b.appendChild(c);
+                    }
+
+                    if (span_messagerie.getAttribute("data-user-adress") && (span_messagerie.getAttribute("data-user-adress") !== span_messagerie.getAttribute("data-user-origin"))) {
+                        let f = document.createElement('button');
+                        f.classList.add('btn');
+                        f.classList.add('btn-info');
+                        f.appendChild(document.createTextNode('Revenir à votre adresse'));
+
+                        f.addEventListener("click", function (e) {
+                            e.preventDefault();
+                            span_messagerie.setAttribute("data-user-origin", span_messagerie.getAttribute("data-user-adress"));
+                            adress_result_html = "";
+                            update_adress_listener(e);
+                        });
+
+                        o.appendChild(f);
+                    }
 
                     adress_result.getElementsByTagName("form")[0].addEventListener("submit", adress_form_listener);
 
-                    b.appendChild(c);
                     d.appendChild(b);
+                    d.appendChild(o)
                 }
 
                 div_alert_green.getElementsByTagName('a')[0].addEventListener("click", update_adress_listener);

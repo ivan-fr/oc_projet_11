@@ -32,6 +32,7 @@
                     {% if current_user.is_anonymous %}
                   data-image-user="{{ url_for('static', filename='image/user.png') }}"
                     {% else %}
+                  data-user-adress="{{ current_user.place_id }}"
                   data-user-origin="{{ current_user.place_id }}"
                   data-image-user="{{ url_for('static', filename='uploads/' + current_user.photo) }}"
                     {% endif %} ></span>
@@ -73,13 +74,19 @@
 
     <div class="row justify-content-center">
         <div class="col-6">
+            <h3>Adresse d'origine :</h3>
+
             {% if current_user.is_anonymous %}
-                <h3>Votre adresse :</h3>
-            {% else %}
-            {% endif %}
-            <div id="result-adress">
                 <p>Pour connaître le trajet jusqu'à votre destination avec
                     GrandPy Bot.</p>
+            {% else %}
+                <div class="alert alert-info">
+                    {{ current_user.street }}, {{ current_user.postal_code }} {{ current_user.city }}, {{ current_user.countries }}
+                </div>
+                <p>Vous pouvez changer votre adresse d'origine.</p>
+            {% endif %}
+
+            <div id="result-adress">
                 <form action="{{ url_for('index') }}" method="post"
                       id="adress_form">
                     {{ form.hidden_tag() }}
