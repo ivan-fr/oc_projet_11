@@ -18,7 +18,7 @@ from grandpyapp.models import User
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    """Render the index page."""
+    """Render the index page"""
     form = AdressForm()
     ask_form = AskForm()
 
@@ -111,6 +111,7 @@ def post_ask():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """ login page rendering """
     if current_user.is_authenticated:
         flash('Déjà connecté')
         return redirect(url_for('index'))
@@ -139,6 +140,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    """ logout page rendering """
     logout_user()
     flash('Déconnexion réussi.')
     return redirect(url_for('index'))
@@ -146,6 +148,7 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """ register page rendering """
     if current_user.is_authenticated:
         flash('Déjà connecté')
         return redirect(url_for('index'))
@@ -187,6 +190,7 @@ def register():
            defaults={'type_form': None})
 @app.route('/user/<username>/<type_form>', methods=['GET', 'POST'])
 def user(username, type_form):
+    """ update user data with form """
     _user = User.query.filter_by(username=username).first_or_404()
     context = {'show_form': False}
 

@@ -17,6 +17,7 @@ function ajaxPost(url, data, successCallback, errorCallback, generalCallback, pr
     req.send(data);
 }
 
+// calculer la trajectoire entre le point d'arrivé et le point de départ
 function calculateAndDisplayRoute(start, end, directionsService, directionsDisplay, div_media, info_div) {
     directionsService.route({
         origin: {placeId: start},
@@ -53,6 +54,7 @@ let countries_input = document.getElementById('countries');
 let messagerie = document.createElement("ul");
 messagerie.classList.add("list-unstyled", "mb-0");
 
+// ajouter un media dans la messagerie
 function addMedia(title, message, src_media, nofirst) {
     let media = document.createElement("li");
     media.classList.add("media");
@@ -103,7 +105,7 @@ addMedia("GrandPy Bot",
 
 let messagerie_form = document.getElementById("messagerie-form");
 
-// Gestion de la soumission du formulaire
+// Gestion de la soumission du formulaire de la messagerie
 messagerie_form.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -249,6 +251,7 @@ let adress_result = document.getElementById("result-adress");
 let adress_form_html = adress_result.innerHTML;
 let adress_result_html = null;
 
+// fonction qui s'occupe du formulaire d'envoie d'adresse de départ
 function adress_form_listener(e) {
     e.preventDefault();
 
@@ -383,7 +386,7 @@ function adress_form_listener(e) {
     );
 }
 
-// Gestion de la soumission du formulaire
+// Gestion de la soumission du formulaire d'envoie d'adresse de départ
 adress_form.addEventListener("submit", adress_form_listener);
 
 let question_list = [

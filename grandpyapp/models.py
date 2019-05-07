@@ -1,6 +1,7 @@
-from grandpyapp import db
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from grandpyapp import db
 from grandpyapp import login
 
 
@@ -10,6 +11,7 @@ def load_user(_id):
 
 
 class User(UserMixin, db.Model):
+    """ User model """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), index=True, unique=True)
     password_hash = db.Column(db.String(128))
