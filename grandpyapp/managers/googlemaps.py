@@ -1,3 +1,5 @@
+import time
+
 from config import GOOGLE_API_KEY
 from .utils import return_urllib_request
 
@@ -20,6 +22,10 @@ class GoogleFunction:
             params["components"] = "country:" + from_country
 
         _dict = return_urllib_request(GEOLOCATE_URL, params)
+
+        if _dict['status'] == "OVER_QUERY_LIMIT":
+            time.sleep(3)
+            _dict = return_urllib_request(GEOLOCATE_URL, params)
 
         assert 'status' in _dict.keys() and _dict['status'] == "OK"
 

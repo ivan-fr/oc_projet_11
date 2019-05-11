@@ -8,7 +8,7 @@ COUNTRIES_FILE = os.path.join(BASE_DIR, "grandpyapp", "static",
                               "countries.json")
 
 SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-GOOGLE_API_KEY = "AIzaSyCIB8gP3P5S-ttaOCZQBj0efd8sSDbPqdQ"
+GOOGLE_API_KEY = "AIzaSyABktea4rFaWShQm7F25YWXgAuv9f-nFvk"
 
 if os.environ.get('DATABASE_URL') is None:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR,

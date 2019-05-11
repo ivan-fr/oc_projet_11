@@ -1,7 +1,7 @@
 import urllib.request
 from io import BytesIO
 from decimal import Decimal
-from grandpyapp.managers import wikipedia
+from grandpyapp.managers.wikipedia import WikipediaFunction, WikipediaPage
 import pytest
 from .mock_data_wiki import mock_data_wiki
 
@@ -32,7 +32,7 @@ class TestSearchLoc:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        assert wikipedia.geosearch(Decimal('40.67693'), Decimal('117.23193')) \
+        assert WikipediaFunction.geosearch(Decimal('40.67693'), Decimal('117.23193')) \
                == self.mock_data['data']["geo_search"]
 
     def test_geosearch_with_radius(self, monkeypatch):
@@ -40,7 +40,7 @@ class TestSearchLoc:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        assert wikipedia.geosearch(
+        assert WikipediaFunction.geosearch(
             Decimal('40.67693'), Decimal('117.23193'), radius=10000) == \
                self.mock_data['data']["geo_search_with_radius"]
 
@@ -49,7 +49,7 @@ class TestSearchLoc:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        assert wikipedia.geosearch(
+        assert WikipediaFunction.geosearch(
             Decimal('40.67693'), Decimal('117.23193'),
             title='Great Wall of China') == \
                self.mock_data['data']["geo_search_with_existing_article_name"]
@@ -59,7 +59,7 @@ class TestSearchLoc:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        assert wikipedia.geosearch(
+        assert WikipediaFunction.geosearch(
             Decimal('40.67693'), Decimal('117.23193'), title='fdosfjdspdj') == \
                self.mock_data['data']["geo_search_with_non_"
                                       "existing_article_name"]
@@ -95,7 +95,7 @@ class TestSearch:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        assert wikipedia.search("Barack Obama") == \
+        assert WikipediaFunction.search("Barack Obama") == \
                self.mock_data['data']["barack.search"]
 
     def test_limit(self, monkeypatch):
@@ -103,14 +103,14 @@ class TestSearch:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        assert len(wikipedia.search("Porsche", results=3)) <= 3
+        assert len(WikipediaFunction.search("Porsche", results=3)) <= 3
 
     def test_suggestion(self, monkeypatch):
         """Test getting a suggestion as well as search results."""
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        search, suggestion = wikipedia.search("hallelulejah", suggestion=True)
+        search, suggestion = WikipediaFunction.search("hallelulejah", suggestion=True)
         assert search == []
         assert suggestion == "hallelujah"
 
@@ -119,7 +119,7 @@ class TestSearch:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        search, suggestion = wikipedia.search("qmxjsudek", suggestion=True)
+        search, suggestion = WikipediaFunction.search("qmxjsudek", suggestion=True)
         assert search == []
         assert suggestion is None
 
@@ -134,7 +134,7 @@ class TestPageSetUp:
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
         with pytest.raises(Exception):
-            wikipedia.page("sdfjpodsjdf", auto_suggest=False)
+            WikipediaFunction.page("sdfjpodsjdf", auto_suggest=False)
 
     def test_redirect_true(self, monkeypatch):
         """Test that a page successfully redirects a query."""
@@ -142,7 +142,7 @@ class TestPageSetUp:
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
         # no error should be raised if redirect is true
-        mp = wikipedia.page("Menlo Park, New Jersey", auto_suggest=False)
+        mp = WikipediaFunction.page("Menlo Park, New Jersey", auto_suggest=False)
 
         assert mp.title == "Edison, New Jersey"
         assert mp.url == "https://en.wikipedia.org/wiki/Edison,_New_Jersey"
@@ -154,7 +154,7 @@ class TestPageSetUp:
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
         with pytest.raises(Exception):
-            wikipedia.page("Menlo Park, New Jersey",
+            WikipediaFunction.page("Menlo Park, New Jersey",
                            auto_suggest=False, redirect=False)
 
     def test_redirect_with_normalization(self, monkeypatch):
@@ -162,8 +162,8 @@ class TestPageSetUp:
 
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        the_party = wikipedia.page("communist Party", auto_suggest=False)
-        assert isinstance(the_party, wikipedia.WikipediaPage)
+        the_party = WikipediaFunction.page("communist Party", auto_suggest=False)
+        assert isinstance(the_party, WikipediaPage)
         assert the_party.title == "Communist party"
 
 
@@ -231,15 +231,15 @@ class TestPage:
         # shortest wikipedia articles with images and sections
         monkeypatch.setattr(urllib.request, 'urlopen', mockreturn)
 
-        self.celtuce = wikipedia.page("Celtuce", auto_suggest=False)
-        self.cyclone = wikipedia.page("Tropical Depression Ten (2005)",
+        self.celtuce = WikipediaFunction.page("Celtuce", auto_suggest=False)
+        self.cyclone = WikipediaFunction.page("Tropical Depression Ten (2005)",
                                       auto_suggest=False)
-        self.great_wall_of_china = wikipedia.page("Great Wall of China",
+        self.great_wall_of_china = WikipediaFunction.page("Great Wall of China",
                                                   auto_suggest=False)
 
     def test_from_page_id(self, monkeypatch):
         """Test loading from a page id"""
-        assert self.celtuce == wikipedia.page(pageid=1868108)
+        assert self.celtuce == WikipediaFunction.page(pageid=1868108)
 
     def test_title(self):
         """Test the title."""

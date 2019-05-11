@@ -1,5 +1,5 @@
 import pytest
-from grandpyapp.managers.parser import get_words_from_sentence, parse_sentence
+from grandpyapp.managers.parser import Parser
 
 
 @pytest.mark.parametrize("sentence,excpected", [
@@ -14,7 +14,7 @@ from grandpyapp.managers.parser import get_words_from_sentence, parse_sentence
      " modalités envisageables, parce que nous le valons bien.", 24)
 ])
 def test_get_words_from_sentence(sentence, excpected):
-    assert len(list(get_words_from_sentence(sentence))) == excpected
+    assert len(list(Parser.get_words_from_sentence(sentence))) == excpected
 
 
 @pytest.mark.parametrize("sentence,excpected", [
@@ -30,4 +30,4 @@ def test_get_words_from_sentence(sentence, excpected):
 ])
 def test_parse_sentence(sentence, excpected):
     """Situationals tests."""
-    assert parse_sentence(sentence) == excpected
+    assert Parser.parse_sentence(sentence) == excpected
